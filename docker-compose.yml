@@ -33,7 +33,35 @@ services:
       - ./certs-data:/data/letsencrypt
     depends_on:
       - dbadmin
+      - mongo_express
     links:
       - dbadmin
+      - mongo_express
+    restart: always
+    
+  mongo:
+    image: mongo
+    container_name: mongo
+    volumes:
+      - ./mongo:/data/db
+    ports:
+     - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: yourpassword
+    restart: always
+
+  mongo_express:
+    image: mongo-express
+    container_name: mongo_express
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: yourexpresspassword
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: yourmongorootpassword
+    depends_on:
+      - mongo
+    links:
+      - mongo:mongo
     restart: always
 
